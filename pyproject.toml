@@ -19,7 +19,6 @@ dependencies = [
   "pillow>=10.0.1",  # Security fix for CVE-2023-4863: https://pillow.readthedocs.io/en/stable/releasenotes/10.0.1.html
   "python-dotenv",
   "git+https://github.com/broadfield-dev/MemAI.git"
-  "
 ]
 
 [project.optional-dependencies]
