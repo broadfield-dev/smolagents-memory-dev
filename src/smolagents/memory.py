@@ -1,10 +1,10 @@
-import imemory
+import memai
 import json
 from dataclasses import asdict, dataclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Any, TypedDict
 
-# Load environment variables for imemory
+# Load environment variables for memai
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -201,9 +201,9 @@ class AgentMemory:
         self.system_prompt = SystemPromptStep(system_prompt=system_prompt)
         self.steps: list[TaskStep | ActionStep | PlanningStep] = []
         
-        # --- iMemory Integration: Initialization ---
+        # --- MemAI Integration: Initialization ---
         logger.info("Initializing persistent memory system...")
-        imemory.initialize_memory_system()
+        memai.initialize_memory_system()
         logger.info("Persistent memory system initialized.")
 
     def add_step(self, step: MemoryStep):
@@ -213,7 +213,7 @@ class AgentMemory:
         """
         self.steps.append(step)
         
-        # --- iMemory Integration: Save Hook ---
+        # --- MemAI Integration: Save Hook ---
         # If the last step was a user task and this step is the bot's action/plan,
         # it forms a complete "turn" that we can save.
         if len(self.steps) > 1:
@@ -226,11 +226,11 @@ class AgentMemory:
                 bot_response_str = json.dumps(current_step.dict())
                 
                 logger.info("Saving interaction turn to persistent memory.")
-                imemory.add_memory_entry(user_input=user_input_str, bot_response=bot_response_str)
+                memai.add_memory_entry(user_input=user_input_str, bot_response=bot_response_str)
 
     def get_retrieved_context_messages(self, current_query: str, k: int = 2) -> list[Message]:
         """
-        --- iMemory Integration: Retrieve Hook ---
+        --- memai Integration: Retrieve Hook ---
         Performs a semantic search on the persistent memory to find relevant
         past interactions and returns them as a list of Message objects.
         
@@ -242,7 +242,7 @@ class AgentMemory:
             list[Message]: A list of messages to be injected into the prompt context.
         """
         logger.info(f"Retrieving {k} relevant memories for query: '{current_query[:50]}...'")
-        retrieved_memories = imemory.retrieve_memories_semantic(current_query, k=k)
+        retrieved_memories = memai.retrieve_memories_semantic(current_query, k=k)
         
         if not retrieved_memories:
             return []
